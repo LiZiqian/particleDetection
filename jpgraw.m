@@ -1,0 +1,20 @@
+
+FID = fopen(img_name,'r');
+frame_raw = fread(FID);
+X = 4128;
+Y = 2480;
+c = X*Y;
+raw = frame_raw(length(frame_raw)-c+1:length(frame_raw));
+raw = reshape(raw,X,Y);
+raw = raw(1:4100,1:2464);
+I = mod(raw(5:5:4100,:),4);
+J = mod(raw(5:5:4100,:)-I,16)/4;
+K = mod(raw(5:5:4100,:)-I-4*J,64)/16;
+L = (raw(5:5:4100,:)-I-4*J-16*K)/64;
+frame_raw = zeros(3280,2464);
+frame_raw(1:4:end,:)=raw(1:5:end,:)*4+L;
+frame_raw(2:4:end,:)=raw(2:5:end,:)*4+K;
+frame_raw(3:4:end,:)=raw(3:5:end,:)*4+J;
+frame_raw(4:4:end,:)=raw(4:5:end,:)*4+I;
+%imagesc(frame_raw',[0 1023]);
+clearvars c X Y raw I J K L FID img_name;
